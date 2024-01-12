@@ -1,0 +1,10 @@
+goals tracker
+
+add, edit, delete, complete goals
+types of goals?
+financial goals might have a way to track a debt balance that you wish to pay down
+and what payments have been made
+
+Tables:
+Goal
+-name, due date, date created, completed?

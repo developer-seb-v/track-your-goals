@@ -2,8 +2,9 @@
 import datetime
 import tkinter
 from tkinter import *
+from tkinter import messagebox
 
-from tkcalendar import DateEntry
+from tkcalendar import Calendar, DateEntry
 
 from query import *
 
@@ -36,18 +37,6 @@ conn.commit()
 conn.close()
 
 
-# queries
-def insert(n, descr, created: datetime):
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    c.execute("""
-       INSERT INTO goal (name, description, date_created)
-       VALUES(?,?,?)
-      """, (n, descr, created))
-    conn.commit()
-    conn.close()
-
-
 # window properties
 main = Tk()
 main.title("Goal Tracker")
@@ -61,6 +50,25 @@ label.pack(side=TOP)
 
 name = StringVar()
 desc = StringVar()
+
+
+# queries
+def insert(n, descr, created: datetime):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    try:
+        c.execute("""
+           INSERT INTO goal (name, description, date_created)
+           VALUES(?,?,?)
+          """, (n, descr, created))
+        conn.commit()
+    except sqlite3.Error as error:
+        print(error)
+    conn.close()
+    messagebox.showinfo("Goal Added", "The goal has been added.")
+    goal_name.delete(0, 'end')
+    goal_description.delete(0, 'end')
+    goal_name.focus()
 
 
 # goal name entry widget
@@ -78,12 +86,18 @@ due_date_label = tkinter.Label(text="Due Date", font="Arial")
 due_date_label.pack(side=TOP)
 
 # due date picker widget
-date_picker = DateEntry(main,  width=10)
+date_picker = DateEntry(main,  locale='en_US', date_pattern='MM/dd/yyyy', width=12)
 date_picker.pack(side=TOP)
-date_picker_input = date_picker.get()
+
 
 # button with sql insert method as command
-add_button = Button(main, text="Add Goal", command=lambda:  insert(name.get(), desc.get(), date_picker_input))
+add_button = Button(main, text="Add Goal", command=lambda:  insert(name.get(), desc.get(), date_picker.get_date()))
 add_button.pack(side=TOP)
+
+# list box
+listbox = tkinter.Listbox(main)
+listbox.insert(0, "hello", "hi", "yo")
+listbox.insert(2, "hola")
+listbox.pack(side=TOP)
 
 main.mainloop()

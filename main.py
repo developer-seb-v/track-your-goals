@@ -1,16 +1,14 @@
 # tkinter gui app
-import datetime
+import sqlite3
 import tkinter
+from datetime import datetime
 from tkinter import *
-from tkinter import messagebox
-
-from tkcalendar import Calendar, DateEntry
-
-from query import *
+from ttkbootstrap.dialogs import Messagebox
+import ttkbootstrap
 
 # tkinter
 
-# db
+
 # create db
 conn = sqlite3.connect('database.db')
 
@@ -19,7 +17,7 @@ c = conn.cursor()
 
 # create table
 c.execute(
-   """
+    """
    CREATE TABLE IF NOT EXISTS goal (
    id INTEGER PRIMARY KEY AUTOINCREMENT,
    name VARCHAR(255) NOT NULL,
@@ -29,13 +27,11 @@ c.execute(
    """
 )
 
-
 # commit changes
 conn.commit()
 
 # close connection
 conn.close()
-
 
 # window properties
 main = Tk()
@@ -65,7 +61,7 @@ def insert(n, descr, created: datetime):
     except sqlite3.Error as error:
         print(error)
     conn.close()
-    messagebox.showinfo("Goal Added", "The goal has been added.")
+    mb = Messagebox.ok("Your goal has been added!", "Goals", parent=top_frame)
     goal_name.delete(0, 'end')
     goal_description.delete(0, 'end')
     goal_name.focus()
@@ -86,18 +82,17 @@ due_date_label = tkinter.Label(text="Due Date", font="Arial")
 due_date_label.pack(side=TOP)
 
 # due date picker widget
-date_picker = DateEntry(main,  locale='en_US', date_pattern='MM/dd/yyyy', width=12)
-date_picker.pack(side=TOP)
+date_picker = ttkbootstrap.DateEntry(main, width=12)
+date_picker.pack(side=TOP, padx=20, pady=20)
+the_date = date_picker.entry.get()
 
 
 # button with sql insert method as command
-add_button = Button(main, text="Add Goal", command=lambda:  insert(name.get(), desc.get(), date_picker.get_date()))
-add_button.pack(side=TOP)
-
-# list box
-listbox = tkinter.Listbox(main)
-listbox.insert(0, "hello", "hi", "yo")
-listbox.insert(2, "hola")
-listbox.pack(side=TOP)
+add_button = (ttkbootstrap.Button
+              (main, text="Add Goal", command=lambda: insert(
+               name.get(),
+               desc.get(),
+               date_picker.entry.get())))
+add_button.pack(side=TOP, padx=20, pady=45)
 
 main.mainloop()

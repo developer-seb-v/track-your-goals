@@ -1,37 +1,14 @@
 # tkinter gui app
-import sqlite3
 import tkinter
-from datetime import datetime
 from tkinter import *
-from ttkbootstrap.dialogs import Messagebox
 import ttkbootstrap
+import Queries
+
+
+# create table if it hasn't been created
+Queries.create_table()
 
 # tkinter
-
-
-# create db
-conn = sqlite3.connect('database.db')
-
-# create cursor
-c = conn.cursor()
-
-# create table
-c.execute(
-    """
-   CREATE TABLE IF NOT EXISTS goal (
-   id INTEGER PRIMARY KEY AUTOINCREMENT,
-   name VARCHAR(255) NOT NULL,
-   description VARCHAR(255) NOT NULL,
-   date_created DATETIME NOT NULL
-   )
-   """
-)
-
-# commit changes
-conn.commit()
-
-# close connection
-conn.close()
 
 # window properties
 main = Tk()
@@ -46,25 +23,6 @@ label.pack(side=TOP)
 
 name = StringVar()
 desc = StringVar()
-
-
-# queries
-def insert(n, descr, created: datetime):
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    try:
-        c.execute("""
-           INSERT INTO goal (name, description, date_created)
-           VALUES(?,?,?)
-          """, (n, descr, created))
-        conn.commit()
-    except sqlite3.Error as error:
-        print(error)
-    conn.close()
-    mb = Messagebox.ok("Your goal has been added!", "Goals", parent=top_frame)
-    goal_name.delete(0, 'end')
-    goal_description.delete(0, 'end')
-    goal_name.focus()
 
 
 # goal name entry widget
@@ -89,7 +47,7 @@ the_date = date_picker.entry.get()
 
 # button with sql insert method as command
 add_button = (ttkbootstrap.Button
-              (main, text="Add Goal", command=lambda: insert(
+              (main, text="Add Goal", command=lambda: Queries.insert(
                name.get(),
                desc.get(),
                date_picker.entry.get())))

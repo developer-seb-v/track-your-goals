@@ -2,8 +2,8 @@
 import tkinter
 from tkinter import *
 import ttkbootstrap
-import Queries
 
+import Queries
 
 # create table if it hasn't been created
 Queries.create_table()
@@ -53,4 +53,11 @@ add_button = (ttkbootstrap.Button
                date_picker.entry.get())))
 add_button.pack(side=TOP, padx=20, pady=45)
 
+view_goals_btn = (ttkbootstrap.Button(main, text="View Goals", command=lambda: Queries.get_goals()))
+view_goals_btn.pack(side=TOP, padx=20, pady=20)
+
+# if Queries.insert:
+#     mb = Messagebox.ok("Your goal has been added!", "Goals", parent=top_frame)
+# else:
+#     mb_error = Messagebox.show_error("Your goal was not added", "Goals Error", parent=top_frame)
 main.mainloop()

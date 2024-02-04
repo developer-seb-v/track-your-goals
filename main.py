@@ -27,6 +27,19 @@ def create_table():
     conn.close()
 
 
+def delete_all():
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    try:
+        c.execute(""" DELETE FROM goal """)
+        conn.commit()
+        Messagebox.ok("All Goals Have Been Deleted", "Delete Goals", alert=True, parent=main)
+
+    except sqlite3.Error as error:
+        print(error)
+    conn.close()
+
+
 # insert a goal into the db
 def insert(n, descr, created: datetime):
     conn = sqlite3.connect('database.db')
@@ -116,5 +129,7 @@ add_button.pack(side=TOP, padx=20, pady=45)
 
 view_goals_btn = (ttkbootstrap.Button(main, text="View Goals", command=lambda: get_goals()))
 view_goals_btn.pack(side=TOP, padx=20, pady=20)
+delete_goals_btn = (ttkbootstrap.Button(main, text="Delete All Goals", command=lambda: delete_all()))
+delete_goals_btn.pack(side=TOP, padx=20)
 
 main.mainloop()
